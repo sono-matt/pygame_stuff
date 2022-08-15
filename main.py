@@ -1,96 +1,80 @@
-# import pygame
-# import random
+import pygame
+import os
+import time
+import random
+pygame.font.init()
 
-# # initialize pygame, like starting the engine
-# pygame.init()
+#LOAD IMAGES
+WIDTH, HEIGHT = 1000, 750
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Space Invaders")
 
-# # set up the screen
-# screen = pygame.display.set_mode((800, 600))
+PLAYER=pygame.transform.scale(pygame.image.load('assets/spaceship.png'), (64, 64))
+BLACK_INV=pygame.image.load('assets/black_invader.png')
+PURUPLE_INV=pygame.image.load('assets/purple_invader.png')
+BULLET=pygame.image.load('assets/bullet_re.png')
+BG = pygame.transform.scale(pygame.image.load('assets/spaceBG.jpg'), (WIDTH, HEIGHT))
+pygame.init()
 
+class Ship:
+    def __init__(self, x, y, health=100):
+        self.x=x
+        self.y=y
+        self.health=health
+        self.laser_img = None
+        self.laser_img = None
+        self.lasers = []
+        self.cool_down_counter = 0
+    def draw(self, window):
+        window.blit(PLAYER, (self.x, self.y)) #what about the self.img stuff?
 
-# # adding a title and icon
-# pygame.display.set_caption("Space Invaders")
-# icon = pygame.image.load('pictures/spaceship.png')
-# pygame.display.set_icon(icon)
+class Player(Ship):
+    def __init__(self, x, y, health=100):
+        super().__init__(x, y, health)
+        self.ship_img = PLAYER
+        self.bullet_img = BULLET
+        self.mask = pyga
+def main():
+    FPS = 60
+    run = True
+    level = 1
+    lives = 5
+    clock = pygame.time.Clock()
+    main_font = pygame.font.SysFont("arial", 50)
 
-# #adding a player
-# playerIMG = pygame.image.load('pictures/spaceship.png')
-# playerIMG = pygame.transform.scale(playerIMG, (64, 64))
-# playerX = 370
-# playerY = 480
-# playerX_change = 0
-# playerY_change = 0
+    player_vel = 5
 
-# #making a function so that this loads on our screen
-# def player(x, y):
-#     screen.blit(playerIMG, (x, y))
+    ship = Ship(300, 650)
 
-# # adding the enemy here
-# enemyIMG = pygame.image.load('pictures/enemy1.png')
-# enemyX = random.randint(0, 760)
-# enemyY = random.randint(50, 150)
-# enemyX_change = 0.1
-# enemyY_change = 40
-
-# #making a function so that this loads on our screen
-# def enemy(x, y):
-#     screen.blit(enemyIMG, (x, y))
-
-# # adding the bullet in
-
-
-# # Game loop so that it runs
-
-# running = True
-# while running:
-#     screen.fill((49, 49, 49)) 
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             running = False
-#     # if function for if we have a keystroke (which in itself is an event) is pressed
-#         if event.type == pygame.KEYDOWN:
-#             #checking if its the a (left)
-#             if event.key == pygame.K_a:
-#                 playerX_change = -0.2
-#             if event.key == pygame.K_d:
-#                 playerX_change = 0.2
-#             if event.key == pygame.K_w:
-#                 playerY_change = -0.2
-#             if event.key == pygame.K_s:
-#                 playerY_change = 0.2
-#         if event.type == pygame.KEYUP:
-#             if event.key == pygame.K_a or event.key == pygame.K_d:
-#                 playerX_change = 0
-#             if event.key == pygame.K_w or event.key == pygame.K_s:
-#                 playerY_change = 0
-    
-#     playerX+=playerX_change
-    
-#     # controlling boundary of player
-#     if playerX <= 0:
-#         playerX = 0
-#     elif playerX >= 736:
-#         playerX = 736
-
-#     # controlling enemy walk with boundary
-#     if enemyX <= 0:
-#         enemyX_change  = 0.1
-#     elif enemyX >= 736:
-#         enemyX_change  = -0.1
-    
-#     #controlling bullet walk with boundary:
-
-#     playerY+=playerY_change
-#     enemyX += enemyX_change
-
-#     if playerY <= 0:
-#         playerY = 0
-#     elif playerY >= 536:
-#         playerY = 536
+    def redraw_window():
+        WIN.blit(BG, (0,0))
+        #draw text
+        level_label = main_font.render(f"Level: {level}", 1, (255,255,255))
+        lives_label = main_font.render(f"Lives: {lives}", 1, (255,255,255))
+        WIN.blit(lives_label,(10, 10))
+        WIN.blit(level_label, (WIDTH - level_label.get_width()-10, 10))
+        ship.draw(WIN)
+        pygame.display.update()
         
-#     player(playerX, playerY)
 
-#     enemy(enemyX, enemyY)
+    while run:
+        clock.tick(FPS)
+        redraw_window()
 
-#     pygame.display.update()
-        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            # if event.type == pygame.KEYDOWN:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a] and ship.x + player_vel > 0: #left
+            ship.x -= player_vel
+        if keys[pygame.K_d] and ship.x + player_vel + 45 < WIDTH: #right
+            ship.x += player_vel
+        if keys[pygame.K_w] and ship.y + player_vel  > 0: #up
+            ship.y -= player_vel
+        if keys[pygame.K_s] and ship.y + player_vel + 45 < HEIGHT: #down
+            ship.y += player_vel
+            
+
+
+main()
